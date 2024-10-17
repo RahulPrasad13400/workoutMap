@@ -61,7 +61,7 @@ class App{
 
     constructor(){
         this.getPosition()
-
+        this.getLocalStorage()
         form.addEventListener('submit',this.newWorkOut.bind(this))
         
         inputType.addEventListener('change',function(){
@@ -94,6 +94,10 @@ class App{
     
     
         this.#map.on('click',this.showForm.bind(this))
+        this.#workouts.forEach(work=>{
+            this.renderWorkOut(work)
+            this.renderWorkoutMarker(work)
+        })
         
         }
         newWorkOut(e){
@@ -134,6 +138,7 @@ class App{
             this.renderWorkoutMarker(workout)
             this.renderWorkOut(workout)
             this.hideForm()
+            this.setLocalStorage()
             inputDistance.value = inputDuration.value = inputCadence.value = inputElevation.value = ''
 
             
@@ -224,7 +229,21 @@ class App{
             this.#map.setView(workout.coords,13)
         }
 
-    
+        setLocalStorage(){
+            localStorage.setItem('workouts',JSON.stringify(this.#workouts))
+        }
+        getLocalStorage(){
+            const data = JSON.parse(localStorage.getItem('workouts'))
+            if(!data) return
+
+            this.#workouts = data
+
+            
+        }
+        reset(){
+            localStorage.removeItem('workouts')
+            location.reload()
+        }
 }
 
 const app = new App()
